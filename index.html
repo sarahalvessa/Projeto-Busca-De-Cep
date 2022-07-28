@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--doctype informa ao agente de usuario a versão do html que deve ser rendenizada-->
+<html lang="pt-br">
+<head>
+<title>Busca de Cep</title>
+<meta charset="utf-8">
+<meta name="author" content="Sarah">
+<meta name="description" content="Buscavde Cep">
+<meta name="keywords" content="busca por cep online">
+<meta name="viewport" content="width=device-width">
+<script src="https://kit.fontawesome.com/1bfcbee079.js" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<html>
+</head>
+    <body>
+        <main class="container">
+            <div class="block">
+                <h3>Não foi possível localizar endereço !</h3>
+            </div>
+            <h1>Busca de CEP</h1>
+                <div class="input">
+                    <label for="cep">Cep</label>
+                    <input type="text" id="cep" maxlength="9">
+                </div>
+                <div class="input">
+                    <label for="endereço">Endereço</label>
+                    <input type="text" id="endereço">
+                </div>
+                <div class="input">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" id="bairro">
+                </div>
+                <div class="input">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" id="cidade">
+                </div>
+                <div class="input">
+                    <label for="estado">Estado</label>
+                    <input type="text" id="estado">
+                </div>
+                <div class="button">
+                    <a href = "#"><h2>Buscar</h2></a>
+                </div>
+            </div>
+        </main>
+        <script>
+            const limpar = (jso) => {
+                    document.getElementById("endereço").value = '';
+                    document.getElementById("bairro").value = '';
+                    document.getElementById("cidade").value = '';
+                    document.getElementById("estado").value = '';
+            };
+
+            const completar = (jso) => {
+                    document.getElementById("endereço").value = jso.logradouro;
+                    document.getElementById("bairro").value = jso.bairro;
+                    document.getElementById("cidade").value = jso.localidade;
+                    document.getElementById("estado").value = jso.uf;
+            };
+
+            const eNumero = (numero) => /^[0-9]+$/.test(numero);
+            const cepValido = (search) => search.length = 8 && eNumero(search);
+
+            const pesquisarcep = async ()=> {
+                limpar();
+
+                const Cep = document.getElementById("cep").value;
+                const search = Cep.replace("-", "");
+                const url = `https://viacep.com.br/ws/${search}/json/`
+
+                if(cepValido(search)){
+                    let req =  await fetch(url);
+                    let jso = await req.json();
+
+                    if(jso.hasOwnProperty('erro')) {
+                        document.getElementById("endereço").value = "Cep não encontrado!";
+                    }else{
+                        completar(jso);
+                    }
+                }else{
+                    document.getElementById("endereço").value = "Cep incorreto!"
+                };
+            };
+
+            document.querySelector(".button").addEventListener("click", pesquisarcep);
+        </script>
+    </body>
+</html>
